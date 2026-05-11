@@ -1,58 +1,56 @@
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@100;300;400;500;700;800&display=swap');
 
-@layer theme {
-  :root {
-    /* Base — warmer than pure black; this is "ink", not "black" */
-    --color-ink: #0A0908;
-    --color-ink-raised: #14110F;
-    --color-ink-deep: #050403;
+:root {
+  /* Base — warmer than pure black; this is "ink", not "black" */
+  --color-ink: #0A0908;
+  --color-ink-raised: #14110F;
+  --color-ink-deep: #050403;
 
-    /* Bone — body text. Warm cream, like aged spec-sheet paper */
-    --color-bone: #EAE0CC;
-    --color-bone-dim: #A89F8C;
-    --color-bone-faint: #5C5648;
+  /* Bone — body text. Warm cream, like aged spec-sheet paper */
+  --color-bone: #EAE0CC;
+  --color-bone-dim: #A89F8C;
+  --color-bone-faint: #5C5648;
 
-    /* Phosphor — the one signal color. Sodium-vapor / amber CRT */
-    --color-phosphor: #FFB000;
-    --color-phosphor-dim: #B37D00;
-    --color-phosphor-glow: rgba(255, 176, 0, 0.2);
+  /* Phosphor — the one signal color. Sodium-vapor / amber CRT */
+  --color-phosphor: #FFB000;
+  --color-phosphor-dim: #B37D00;
+  --color-phosphor-glow: rgba(255, 176, 0, 0.2);
 
-    /* Steel — chrome / metallic UI */
-    --color-steel: #4A4E55;
-    --color-steel-light: #6B6E73;
+  /* Steel — chrome / metallic UI */
+  --color-steel: #4A4E55;
+  --color-steel-light: #6B6E73;
 
-    /* Crimson — warnings, alerts, clearance stamp only */
-    --color-crimson: #7A1F1F;
+  /* Crimson — warnings, alerts, clearance stamp only */
+  --color-crimson: #7A1F1F;
 
-    /* Spectrum — for charts/diagrams only */
-    --color-spectrum-1: #FFB000;
-    --color-spectrum-2: #6FA8DC;
-    --color-spectrum-3: #93C47D;
-    --color-spectrum-4: #C27BA0;
+  /* Spectrum — for charts/diagrams only */
+  --color-spectrum-1: #FFB000;
+  --color-spectrum-2: #6FA8DC;
+  --color-spectrum-3: #93C47D;
+  --color-spectrum-4: #C27BA0;
 
-    /* Motion easing */
-    --ease-station: cubic-bezier(0.16, 1, 0.30, 1);
-    --ease-relay: cubic-bezier(0.65, 0, 0.35, 1);
-    --ease-drift: cubic-bezier(0.45, 0, 0.55, 1);
+  /* Motion easing */
+  --ease-station: cubic-bezier(0.16, 1, 0.30, 1);
+  --ease-relay: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-drift: cubic-bezier(0.45, 0, 0.55, 1);
 
-    /* Motion duration */
-    --dur-instant: 120ms;
-    --dur-fast: 240ms;
-    --dur-base: 480ms;
-    --dur-slow: 900ms;
-    --dur-epic: 1600ms;
+  /* Motion duration */
+  --dur-instant: 120ms;
+  --dur-fast: 240ms;
+  --dur-base: 480ms;
+  --dur-slow: 900ms;
+  --dur-epic: 1600ms;
 
-    /* Typography scale */
-    --text-xs: clamp(0.70rem, 0.68rem + 0.10vw, 0.75rem);
-    --text-sm: clamp(0.80rem, 0.77rem + 0.15vw, 0.85rem);
-    --text-base: clamp(0.92rem, 0.88rem + 0.20vw, 1.00rem);
-    --text-lg: clamp(1.10rem, 1.02rem + 0.40vw, 1.25rem);
-    --text-xl: clamp(1.30rem, 1.15rem + 0.75vw, 1.60rem);
-    --text-2xl: clamp(1.60rem, 1.30rem + 1.50vw, 2.20rem);
-    --text-3xl: clamp(2.00rem, 1.50rem + 2.50vw, 3.20rem);
-    --text-4xl: clamp(2.80rem, 1.90rem + 4.50vw, 5.00rem);
-    --text-hero: clamp(3.50rem, 2.20rem + 6.50vw, 7.50rem);
-  }
+  /* Typography scale */
+  --text-xs: clamp(0.70rem, 0.68rem + 0.10vw, 0.75rem);
+  --text-sm: clamp(0.80rem, 0.77rem + 0.15vw, 0.85rem);
+  --text-base: clamp(0.92rem, 0.88rem + 0.20vw, 1.00rem);
+  --text-lg: clamp(1.10rem, 1.02rem + 0.40vw, 1.25rem);
+  --text-xl: clamp(1.30rem, 1.15rem + 0.75vw, 1.60rem);
+  --text-2xl: clamp(1.60rem, 1.30rem + 1.50vw, 2.20rem);
+  --text-3xl: clamp(2.00rem, 1.50rem + 2.50vw, 3.20rem);
+  --text-4xl: clamp(2.80rem, 1.90rem + 4.50vw, 5.00rem);
+  --text-hero: clamp(3.50rem, 2.20rem + 6.50vw, 7.50rem);
 }
 
 * {
