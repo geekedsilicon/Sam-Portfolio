@@ -1,0 +1,236 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@100;300;400;500;700;800&display=swap');
+
+@layer theme {
+  :root {
+    /* Base — warmer than pure black; this is "ink", not "black" */
+    --color-ink: #0A0908;
+    --color-ink-raised: #14110F;
+    --color-ink-deep: #050403;
+
+    /* Bone — body text. Warm cream, like aged spec-sheet paper */
+    --color-bone: #EAE0CC;
+    --color-bone-dim: #A89F8C;
+    --color-bone-faint: #5C5648;
+
+    /* Phosphor — the one signal color. Sodium-vapor / amber CRT */
+    --color-phosphor: #FFB000;
+    --color-phosphor-dim: #B37D00;
+    --color-phosphor-glow: rgba(255, 176, 0, 0.2);
+
+    /* Steel — chrome / metallic UI */
+    --color-steel: #4A4E55;
+    --color-steel-light: #6B6E73;
+
+    /* Crimson — warnings, alerts, clearance stamp only */
+    --color-crimson: #7A1F1F;
+
+    /* Spectrum — for charts/diagrams only */
+    --color-spectrum-1: #FFB000;
+    --color-spectrum-2: #6FA8DC;
+    --color-spectrum-3: #93C47D;
+    --color-spectrum-4: #C27BA0;
+
+    /* Motion easing */
+    --ease-station: cubic-bezier(0.16, 1, 0.30, 1);
+    --ease-relay: cubic-bezier(0.65, 0, 0.35, 1);
+    --ease-drift: cubic-bezier(0.45, 0, 0.55, 1);
+
+    /* Motion duration */
+    --dur-instant: 120ms;
+    --dur-fast: 240ms;
+    --dur-base: 480ms;
+    --dur-slow: 900ms;
+    --dur-epic: 1600ms;
+
+    /* Typography scale */
+    --text-xs: clamp(0.70rem, 0.68rem + 0.10vw, 0.75rem);
+    --text-sm: clamp(0.80rem, 0.77rem + 0.15vw, 0.85rem);
+    --text-base: clamp(0.92rem, 0.88rem + 0.20vw, 1.00rem);
+    --text-lg: clamp(1.10rem, 1.02rem + 0.40vw, 1.25rem);
+    --text-xl: clamp(1.30rem, 1.15rem + 0.75vw, 1.60rem);
+    --text-2xl: clamp(1.60rem, 1.30rem + 1.50vw, 2.20rem);
+    --text-3xl: clamp(2.00rem, 1.50rem + 2.50vw, 3.20rem);
+    --text-4xl: clamp(2.80rem, 1.90rem + 4.50vw, 5.00rem);
+    --text-hero: clamp(3.50rem, 2.20rem + 6.50vw, 7.50rem);
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+  font-feature-settings: 'tnum';
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--text-base);
+  line-height: 1.6;
+}
+
+body {
+  background-color: var(--color-ink);
+  color: var(--color-bone);
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Scanlines overlay — fixed, persistent, 3% opacity */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 999;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 2px,
+    rgba(234, 224, 204, 0.03) 2px,
+    rgba(234, 224, 204, 0.03) 3px
+  );
+  animation: drift 8s linear infinite;
+}
+
+@keyframes drift {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before {
+    animation: none;
+  }
+}
+
+/* Grain texture overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 998;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' result='noise' /%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' opacity='0.04'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+/* Grid backdrop */
+body {
+  background-image:
+    radial-gradient(
+      circle at center,
+      rgba(234, 224, 204, 0.06) 1px,
+      transparent 1px
+    );
+  background-size: 32px 32px;
+  background-attachment: fixed;
+}
+
+/* Typography baseline */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  margin-bottom: 1rem;
+}
+
+a {
+  color: var(--color-phosphor);
+  text-decoration: none;
+  transition: color var(--dur-fast) var(--ease-station);
+}
+
+a:hover {
+  color: var(--color-phosphor);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+a:focus-visible {
+  outline: 2px solid var(--color-phosphor);
+  outline-offset: 2px;
+}
+
+/* Form elements */
+input,
+textarea,
+select {
+  background-color: var(--color-ink-raised);
+  color: var(--color-bone);
+  border: 1px solid var(--color-bone-faint);
+  border-radius: 0;
+  padding: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--text-base);
+  transition: border-color var(--dur-fast) var(--ease-station);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--color-phosphor);
+  box-shadow: 0 0 0 3px var(--color-phosphor-glow);
+}
+
+::placeholder {
+  color: var(--color-bone-dim);
+}
+
+/* Button baseline */
+button {
+  background-color: var(--color-ink-raised);
+  color: var(--color-phosphor);
+  border: 1px solid var(--color-phosphor);
+  padding: 0.75rem 1.5rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--text-base);
+  cursor: pointer;
+  transition: all var(--dur-fast) var(--ease-station);
+}
+
+button:hover {
+  background-color: var(--color-phosphor);
+  color: var(--color-ink);
+}
+
+button:focus-visible {
+  outline: 2px solid var(--color-phosphor);
+  outline-offset: 2px;
+}
+
+/* Skip link */
+a[href='#main'] {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-phosphor);
+  color: var(--color-ink);
+  padding: 8px;
+  z-index: 100;
+}
+
+a[href='#main']:focus {
+  top: 0;
+}
+
+/* Utility: tabular numerics */
+.tabular-nums {
+  font-feature-settings: 'tnum';
+}
+
+/* Utility: reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
