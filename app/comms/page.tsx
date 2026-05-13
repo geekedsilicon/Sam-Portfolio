@@ -1,11 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { StationTitle } from '@/components/typography/StationTitle'
 import { AsciiBox } from '@/components/typography/AsciiBox'
-
-// Note: metadata must be exported from a server component; using title in StationTitle instead
-// export const metadata: Metadata = { title: 'Comms', description: '...' }
 
 const CONTACT = {
   email: 'samuel.c.kelley@proton.me',
@@ -14,11 +14,26 @@ const CONTACT = {
   github: 'https://github.com/sammysprinkler',
 }
 
+const schema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  email: z.string().email('Invalid email'),
+  org: z.string().optional(),
+  message: z.string().min(10, 'Message must be at least 10 characters'),
+})
+type FormData = z.infer<typeof schema>
+
 export default function CommsPage() {
   const [copied, setCopied] = useState<string | null>(null)
   const [formOpen, setFormOpen] = useState(false)
   const [pgpOpen, setPgpOpen] = useState(false)
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<FormData>({ resolver: zodResolver(schema) })
 
   const copyToClipboard = (text: string, key: string) => {
     navigator.clipboard.writeText(text).then(() => {
@@ -27,11 +42,20 @@ export default function CommsPage() {
     })
   }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault()
-    setStatus('sending')
-    // Simulated send — wire to /api/comms when backend is ready
-    setTimeout(() => setStatus('sent'), 1200)
+  const onSubmit = async (data: FormData) => {
+    setSubmitStatus('idle')
+    try {
+      const res = await fetch('/api/comms', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      if (!res.ok) throw new Error('Send failed')
+      setSubmitStatus('success')
+      reset()
+    } catch {
+      setSubmitStatus('error')
+    }
   }
 
   return (
@@ -43,7 +67,6 @@ export default function CommsPage() {
       />
 
       <section style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        {/* PRIMARY — raw contacts */}
         <AsciiBox title="PRIMARY CHANNELS">
           <div className="font-mono" style={{ fontSize: 'var(--text-xs)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             <ContactRow
@@ -63,7 +86,6 @@ export default function CommsPage() {
           </div>
         </AsciiBox>
 
-        {/* NETWORK */}
         <AsciiBox title="NETWORK">
           <div className="font-mono" style={{ fontSize: 'var(--text-xs)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             <ContactRow
@@ -85,7 +107,6 @@ export default function CommsPage() {
           </div>
         </AsciiBox>
 
-        {/* DOCUMENTS */}
         <AsciiBox title="DOCUMENTS">
           <div className="font-mono" style={{ fontSize: 'var(--text-xs)', display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -114,61 +135,29 @@ export default function CommsPage() {
           </div>
         </AsciiBox>
 
-        {/* PGP — collapsed */}
+        {/* PGP */}
         <div>
           <button
             onClick={() => setPgpOpen(!pgpOpen)}
             className="font-mono"
-            style={{
-              fontSize: 'var(--text-xs)',
-              color: 'var(--color-bone-dim)',
-              background: 'none',
-              border: 'none',
-              padding: 0,
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-            }}
+            style={{ fontSize: 'var(--text-xs)', color: 'var(--color-bone-dim)', background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}
           >
             <span style={{ color: 'var(--color-phosphor)' }}>{pgpOpen ? '▾' : '▸'}</span>
             [ENCRYPTED COMMS — PGP Public Key]
           </button>
           {pgpOpen && (
-            <div
-              className="font-mono"
-              style={{
-                marginTop: '0.75rem',
-                padding: '1rem',
-                background: 'var(--color-ink-raised)',
-                border: '1px solid var(--color-bone-faint)',
-                fontSize: 'var(--text-xs)',
-                color: 'var(--color-bone-dim)',
-                overflowX: 'auto',
-              }}
-            >
-              <pre>{`-----BEGIN PGP PUBLIC KEY BLOCK-----
-
-[PGP key will be added here]
-
------END PGP PUBLIC KEY BLOCK-----`}</pre>
+            <div className="font-mono" style={{ marginTop: '0.75rem', padding: '1rem', background: 'var(--color-ink-raised)', border: '1px solid var(--color-bone-faint)', fontSize: 'var(--text-xs)', color: 'var(--color-bone-dim)', overflowX: 'auto' }}>
+              <pre>{`-----BEGIN PGP PUBLIC KEY BLOCK-----\n\n[PGP key will be added here]\n\n-----END PGP PUBLIC KEY BLOCK-----`}</pre>
             </div>
           )}
         </div>
 
-        {/* Prefer a form? */}
+        {/* Secure form */}
         <div style={{ borderTop: '1px solid var(--color-bone-faint)', paddingTop: '1.5rem' }}>
           <button
-            onClick={() => setFormOpen(!formOpen)}
+            onClick={() => { setFormOpen(!formOpen); setSubmitStatus('idle') }}
             className="font-mono"
-            style={{
-              fontSize: 'var(--text-xs)',
-              color: 'var(--color-bone-dim)',
-              background: 'none',
-              border: 'none',
-              padding: 0,
-              cursor: 'pointer',
-            }}
+            style={{ fontSize: 'var(--text-xs)', color: 'var(--color-bone-dim)', background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
           >
             Prefer a form?{' '}
             <span style={{ color: 'var(--color-phosphor)', textDecoration: 'underline' }}>
@@ -179,50 +168,39 @@ export default function CommsPage() {
           {formOpen && (
             <div style={{ marginTop: '1.5rem' }}>
               <AsciiBox title="SECURE MESSAGE FORM">
-                {status === 'sent' ? (
-                  <p className="font-mono" style={{ fontSize: 'var(--text-sm)', color: 'var(--color-phosphor)' }}>
-                    ✓ Transmission received. I will respond within 24 hours.
-                  </p>
-                ) : (
-                  <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                    <FormField label="NAME" name="name" type="text" required />
-                    <FormField label="EMAIL" name="email" type="email" required />
-                    <FormField label="ORGANIZATION (optional)" name="org" type="text" />
-                    <div>
-                      <label
-                        htmlFor="message"
-                        className="font-mono"
-                        style={{ display: 'block', fontSize: 'var(--text-xs)', color: 'var(--color-bone-dim)', marginBottom: '0.5rem' }}
-                      >
-                        MESSAGE
-                      </label>
-                      <textarea
-                        id="message"
-                        name="message"
-                        rows={6}
-                        required
-                        style={{ width: '100%' }}
-                        placeholder="Your message here..."
-                        aria-label="Message"
-                      />
-                    </div>
-                    <button
-                      type="submit"
-                      disabled={status === 'sending'}
-                      style={{ alignSelf: 'flex-start' }}
-                    >
-                      {status === 'sending' ? 'TRANSMITTING...' : 'TRANSMIT'}
+                {submitStatus === 'success' ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <p className="font-mono" style={{ fontSize: 'var(--text-sm)', color: 'var(--color-phosphor)' }}>
+                      ✓ Transmission received. I will respond within 24 hours.
+                    </p>
+                    <button className="cta-secondary" style={{ alignSelf: 'flex-start', fontSize: 'var(--text-xs)' }} onClick={() => { setSubmitStatus('idle'); setFormOpen(false) }}>
+                      Close
                     </button>
-                    {status === 'error' && (
-                      <p
-                        className="font-mono"
-                        style={{ fontSize: 'var(--text-xs)', color: 'var(--color-crimson)' }}
-                        role="alert"
-                        aria-live="assertive"
-                      >
-                        Transmission failed. Please email directly.
-                      </p>
-                    )}
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit(onSubmit)} noValidate style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                    <FormField label="NAME" error={errors.name?.message}>
+                      <input {...register('name')} type="text" style={{ width: '100%' }} placeholder="your name" aria-label="Name" />
+                    </FormField>
+                    <FormField label="EMAIL" error={errors.email?.message}>
+                      <input {...register('email')} type="email" style={{ width: '100%' }} placeholder="your@email.com" aria-label="Email" />
+                    </FormField>
+                    <FormField label="ORGANIZATION (optional)">
+                      <input {...register('org')} type="text" style={{ width: '100%' }} placeholder="company / org (optional)" aria-label="Organization" />
+                    </FormField>
+                    <FormField label="MESSAGE" error={errors.message?.message}>
+                      <textarea {...register('message')} rows={6} style={{ width: '100%' }} placeholder="Your message here..." aria-label="Message" />
+                    </FormField>
+                    <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <button type="submit" disabled={isSubmitting} style={{ alignSelf: 'flex-start', opacity: isSubmitting ? 0.7 : 1 }}>
+                        {isSubmitting ? 'TRANSMITTING...' : 'TRANSMIT'}
+                      </button>
+                      {submitStatus === 'error' && (
+                        <p className="font-mono" style={{ fontSize: 'var(--text-xs)', color: 'var(--color-crimson)' }} role="alert" aria-live="assertive">
+                          Transmission failed. Please email directly.
+                        </p>
+                      )}
+                    </div>
                   </form>
                 )}
               </AsciiBox>
@@ -234,48 +212,16 @@ export default function CommsPage() {
   )
 }
 
-function ContactRow({
-  label,
-  copyLabel,
-  onCopy,
-  href,
-  hrefLabel,
-  external,
-}: {
-  label: string
-  copyLabel: string
-  onCopy: () => void
-  href: string
-  hrefLabel: string
-  external?: boolean
-}) {
+function ContactRow({ label, copyLabel, onCopy, href, hrefLabel, external }: { label: string; copyLabel: string; onCopy: () => void; href: string; hrefLabel: string; external?: boolean }) {
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem' }}>
       <span style={{ color: 'var(--color-bone)' }}>{label}</span>
       <div style={{ display: 'flex', gap: '0.5rem' }}>
-        <button
-          onClick={onCopy}
-          style={{
-            padding: '0.15rem 0.5rem',
-            fontSize: 'var(--text-xs)',
-            color: 'var(--color-phosphor)',
-            border: '1px solid var(--color-phosphor)',
-            background: 'none',
-          }}
-          aria-label={`${copyLabel} ${label}`}
-        >
+        <button onClick={onCopy} style={{ padding: '0.15rem 0.5rem', fontSize: 'var(--text-xs)', color: 'var(--color-phosphor)', border: '1px solid var(--color-phosphor)', background: 'none' }} aria-label={`${copyLabel} ${label}`}>
           [{copyLabel}]
         </button>
         {!external && (
-          <a
-            href={href}
-            style={{
-              padding: '0.15rem 0.5rem',
-              fontSize: 'var(--text-xs)',
-              color: 'var(--color-bone-dim)',
-              border: '1px solid var(--color-bone-faint)',
-            }}
-          >
+          <a href={href} style={{ padding: '0.15rem 0.5rem', fontSize: 'var(--text-xs)', color: 'var(--color-bone-dim)', border: '1px solid var(--color-bone-faint)' }}>
             [{hrefLabel}]
           </a>
         )}
@@ -284,35 +230,14 @@ function ContactRow({
   )
 }
 
-function FormField({
-  label,
-  name,
-  type,
-  required,
-}: {
-  label: string
-  name: string
-  type: string
-  required?: boolean
-}) {
+function FormField({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return (
     <div>
-      <label
-        htmlFor={name}
-        className="font-mono"
-        style={{ display: 'block', fontSize: 'var(--text-xs)', color: 'var(--color-bone-dim)', marginBottom: '0.5rem' }}
-      >
+      <label className="font-mono" style={{ display: 'block', fontSize: 'var(--text-xs)', color: error ? 'var(--color-crimson)' : 'var(--color-bone-dim)', marginBottom: '0.5rem' }}>
         {label}
+        {error && <span style={{ marginLeft: '0.5rem', fontStyle: 'italic' }}>— {error}</span>}
       </label>
-      <input
-        id={name}
-        type={type}
-        name={name}
-        required={required}
-        style={{ width: '100%' }}
-        placeholder={label.split(' (')[0].toLowerCase()}
-        aria-label={label}
-      />
+      {children}
     </div>
   )
 }

@@ -13,6 +13,7 @@ export interface CaseStudy {
   hook: string
   repoUrl: string | null
   demoUrl: string | null
+  diagramPath: string | null
   diagramAlt: string | null
   metrics: { label: string; value: string }[]
   sections: {
@@ -36,6 +37,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     hook: 'Top-500-globally niche language meets defense-grade packet rewriting.',
     repoUrl: 'https://github.com/sammysprinkler/nat-with-p4',
     demoUrl: null,
+    diagramPath: '/diagrams/nat-p4-arch.svg',
     diagramAlt: 'P4 NAT architecture: ingress parser → match-action tables → egress deparser, with Wireshark capture validation at each stage.',
     metrics: [
       { label: 'NAT control efficiency improvement', value: METRICS.onr_nat_efficiency.value },
@@ -114,6 +116,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     hook: 'Zero unplanned downtime across 10,000+ servers. 50% patch cycle reduction. 70% fewer manual errors.',
     repoUrl: 'https://github.com/sammysprinkler/patch-orchestration-demo',
     demoUrl: null,
+    diagramPath: '/diagrams/patch-arch.svg',
     diagramAlt: 'Patch orchestration: Jenkins triggers Ansible playbooks scoped by inventory tier, canary → batch → full-fleet rollout, with health checks and automated rollback hooks.',
     metrics: [
       { label: 'Servers managed', value: METRICS.wf_server_count.value },
@@ -203,6 +206,7 @@ export const CASE_STUDIES: CaseStudy[] = [
     hook: 'Defense-adjacent MITM-resistant messaging. Scrum Master for a 5-person capstone team. Full whitepaper.',
     repoUrl: 'https://github.com/sammysprinkler/blockchain-secure-comms',
     demoUrl: null,
+    diagramPath: null,
     diagramAlt: 'Blockchain message architecture: sender signs message with private key → transaction broadcast to blockchain network → receiver verifies signature via public key ledger.',
     metrics: [
       { label: 'Deployment target', value: 'Fort Jackson, SC' },

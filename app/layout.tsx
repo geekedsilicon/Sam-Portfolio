@@ -5,6 +5,7 @@ import { Footer } from '@/components/chrome/Footer'
 import './globals.css'
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://samuelkelley.dev'),
   title: {
     default: 'Samuel Kelley — Cloud Security & Infrastructure Engineer',
     template: '%s | Samuel Kelley',
@@ -54,6 +55,30 @@ export default function RootLayout({
         <meta name="theme-color" content="#0A0908" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'Person',
+              name: 'Samuel Kelley',
+              jobTitle: 'Cloud Security & Infrastructure Engineer',
+              email: 'samuel.c.kelley@proton.me',
+              telephone: '+18287475412',
+              url: 'https://samuelkelley.dev',
+              address: { '@type': 'PostalAddress', addressLocality: 'Charlotte', addressRegion: 'NC', addressCountry: 'US' },
+              alumniOf: [
+                { '@type': 'EducationalOrganization', name: 'Johns Hopkins University', url: 'https://www.jhu.edu' },
+                { '@type': 'EducationalOrganization', name: 'University of South Carolina', url: 'https://www.sc.edu' },
+              ],
+              knowsAbout: ['Cloud Security', 'Infrastructure Engineering', 'Ansible', 'AWS', 'CVE Remediation', 'P4 Programming', 'Cybersecurity'],
+              sameAs: [
+                'https://github.com/sammysprinkler',
+                'https://linkedin.com/in/samuel-kelley-73256b1b7',
+              ],
+            }),
+          }}
+        />
       </head>
       <body className="bg-ink text-bone">
         {/* Skip to main content */}

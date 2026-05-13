@@ -114,8 +114,34 @@ export default async function CaseStudyPage({ params }: PageProps) {
         </p>
       </header>
 
-      {/* Diagram placeholder */}
-      {cs.diagramAlt && (
+      {/* Architecture diagram */}
+      {cs.diagramPath ? (
+        <figure style={{ marginBottom: '2rem' }}>
+          <img
+            src={cs.diagramPath}
+            alt={cs.diagramAlt ?? 'Architecture diagram'}
+            style={{
+              width: '100%',
+              height: 'auto',
+              border: '1px solid var(--color-bone-faint)',
+              display: 'block',
+            }}
+          />
+          {cs.diagramAlt && (
+            <figcaption
+              className="font-mono"
+              style={{
+                fontSize: 'var(--text-xs)',
+                color: 'var(--color-bone-faint)',
+                marginTop: '0.5rem',
+                fontStyle: 'italic',
+              }}
+            >
+              {cs.diagramAlt}
+            </figcaption>
+          )}
+        </figure>
+      ) : cs.diagramAlt ? (
         <div
           style={{
             border: '1px solid var(--color-bone-faint)',
@@ -128,12 +154,12 @@ export default async function CaseStudyPage({ params }: PageProps) {
             className="font-mono"
             style={{ fontSize: 'var(--text-xs)', color: 'var(--color-bone-faint)', fontStyle: 'italic' }}
           >
-            [ARCHITECTURE DIAGRAM]
+            [DIAGRAM PENDING]
             <br />
             {cs.diagramAlt}
           </div>
         </div>
-      )}
+      ) : null}
 
       {/* Case study body */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
