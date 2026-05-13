@@ -12,6 +12,7 @@
     "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
     "@react-three/drei": "^9.98.0",
     "@react-three/fiber": "^8.15.0",
     "@tailwindcss/postcss": "^4.3.0",
