@@ -1,5 +1,6 @@
 interface LatinMottoProps {
   children: string
+  translate?: boolean
   translat?: string
 }
 
@@ -9,8 +10,10 @@ const TRANSLATIONS: Record<string, string> = {
   'Non Sibi Sed Patriae': 'Not for Self, but for Country',
 }
 
-export function LatinMotto({ children, translat }: LatinMottoProps) {
-  const translation = translat || TRANSLATIONS[children.trim()] || null
+export function LatinMotto({ children, translate, translat }: LatinMottoProps) {
+  const translation =
+    translat ||
+    (translate !== false ? TRANSLATIONS[children.trim()] ?? null : null)
 
   return (
     <div className="my-4">

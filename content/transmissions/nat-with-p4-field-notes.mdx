@@ -1,0 +1,86 @@
+---
+title: "NAT in the Modern Firewall: A P4 Programmer's Field Notes"
+slug: "nat-with-p4-field-notes"
+date: "2026-03-22"
+excerpt: "Notes from four months of writing P4 for the Office of Naval Research — what programmable data planes actually unlock, and where the abstraction leaks."
+topics: ["cyber", "infra"]
+readTime: 9
+status: "transmission"
+---
+
+In early 2022 I spent a semester as an undergraduate research assistant in Jorge Crichigno's lab at the University of South Carolina, working on P4-based packet forwarding under Office of Naval Research funding. My job, narrowly, was to write match-action tables for next-generation NAT in simulated firewall environments. My job, broadly, was to learn one of the most niche programming languages in the world.
+
+I want to write this down before I forget it, because P4 is a language I might not touch professionally for several years, and the parts of it that are worth remembering are not in the manuals.
+
+## What P4 actually is.
+
+P4 is a language for programming the data plane of network devices.
+
+A traditional router or switch has a fixed pipeline — incoming packet, lookup destination in the forwarding table, decrement TTL, send to egress port. The pipeline is baked into silicon. You can configure it, but you cannot reshape it.
+
+A P4-programmable device lets you *write* the pipeline. You define your own headers, your own parser, your own match-action tables, your own deparser. The chip executes whatever forwarding behavior you describe.
+
+The reason this matters: NAT in a traditional firewall is a special case bolted onto a forwarding pipeline. NAT in a P4 device is *just another match-action table*, which means you can compose it with arbitrary other behaviors — custom telemetry, stateful firewalling, encryption offload — without leaving the data plane.
+
+That's the pitch. Here's what it actually felt like to do for four months.
+
+## What worked.
+
+### 1. The match-action table abstraction is the right one.
+
+After enough P4, you stop thinking about packets as "things that flow through a router" and start thinking about them as "structured records that get rewritten as they pass through stages of a pipeline." Once you have that mental model, NAT and routing and firewalling all collapse into the same shape: *parse, lookup, modify, emit.*
+
+That mental model is portable. It maps cleanly onto eBPF/XDP for Linux kernel data-plane work. It maps onto DPDK for userspace networking. It even maps onto general distributed-systems work, where the same pattern shows up in service meshes and load balancers. **P4 taught me how to think about network code in a way that has paid dividends for everything I've done since.**
+
+### 2. The simulator is your friend.
+
+We ran almost all of our P4 work in a virtual machine using BMv2, the P4 software switch. Real P4-programmable hardware (Tofino chips, mostly) was out of reach for an undergraduate lab. The simulator is slower than hardware by orders of magnitude, but for development it is fine, and it forces you to validate behavior on packet captures rather than guessing from blinkenlights.
+
+**Wireshark on the egress of a BMv2 simulation tells you more, faster, than any debugger I've used for any other kind of code.** This was the single highest-leverage tool in the workflow.
+
+### 3. The OSI model holds up.
+
+P4 makes you think very carefully about which layer you are operating on. Are you parsing Ethernet, IP, TCP, or something else? Are you matching on a layer-4 field after the layer-3 lookup? The language forces precision about layering in a way most application code does not. I came out of the project with a deeper, more *operational* understanding of the OSI model than four years of networking classes had given me.
+
+## What didn't work.
+
+I want to be honest: I was not particularly good at P4. The professor in charge, Jorge Crichigno, is one of the most rigorous network researchers I've worked with, and his standards are calibrated to people who think about packet forwarding for a living. **There are maybe five hundred people in the world who are P4 experts in any deep sense.** I was not one of them at the end of four months. I am still not one of them.
+
+But that's not the lesson. The lesson is that the *exposure* to P4 mattered more than the proficiency. Here's what I mean:
+
+### 1. The parser is where everything breaks.
+
+If your P4 parser is wrong, nothing else downstream matters. The match-action tables can be perfectly constructed; if you misparsed the packet at ingress, you are matching on garbage.
+
+I cannot tell you how many hours I lost to subtle parser bugs in the first two months. Eventually I started writing test vectors *first* — handcrafted packet captures with known values — and running them through the parser in isolation before wiring up the rest of the pipeline. That discipline scales to almost any other systems-programming work I do today.
+
+### 2. Match-action tables are not free.
+
+In hardware, you have a fixed budget of TCAM and SRAM. Every match-action table you add consumes that budget. A real P4 program for production hardware has to be designed around the resource constraints of the target chip — and the constraints differ across vendors.
+
+In the simulator, it's easy to forget about this. You write tables liberally, the BMv2 happily runs them, and you ship a program that would never fit on a real Tofino chip. Several times I had to refactor a working simulator program into a version that would actually compile for hardware, and the refactor was non-trivial.
+
+**Code that runs in the simulator is not the same as code that runs in production.** This is a lesson that generalizes to roughly every job I've had since.
+
+### 3. NAT is harder than it looks.
+
+The specific thing I was working on was NAT control — translating between private and public IP address spaces in a programmable way that supported richer policies than traditional NAT (CGNAT-style port allocation, stateful tracking, etc.).
+
+NAT, on the surface, is a simple lookup: replace source IP and source port, track the mapping, replace the destination on the return path. In practice, NAT requires *state*, and state in a data plane is expensive. Every flow you track is a row in a table that has to be allocated, updated, expired, and freed in nanoseconds. **The reason "stateful firewall" is a category of product is that the state-management problem is genuinely hard at line rate.**
+
+Doing it in P4 taught me to respect what Palo Alto, Cisco, and Fortinet engineers are actually doing inside their products. It is not the same kind of programming I do at a higher layer.
+
+## Where the lessons cash out today.
+
+I don't write P4 for a living. I probably never will. But four months of P4 changed how I think about:
+
+- **Network policy in the cloud.** Every AWS Security Group rule is a match-action entry on a virtualized data plane. Once you've written P4, the abstraction stops being a black box.
+- **Firewall vendor selection.** When I'm evaluating Palo Alto vs. Fortinet vs. an open-source alternative, I now ask different questions about how state is managed at line rate.
+- **eBPF/XDP work.** The mental model transfers cleanly. eBPF for kernel-level packet filtering is *much* more accessible than P4, and the design patterns from P4 — parser → match-action → action — show up directly.
+- **Talking to network engineers.** I can hold a real conversation with people who design firewall pipelines for a living. That trust pays dividends in every cross-functional infrastructure conversation.
+
+If you ever get the chance to spend a few months on something this niche, take it. The skill itself may never be commercially valuable for you. **The mental model from acquiring the skill almost certainly will be.**
+
+---
+
+*Audacia et veritas.*

@@ -1,0 +1,109 @@
+---
+title: "How I Patched 10,000 Servers Without Breaking Production"
+slug: "patching-10k-servers"
+date: "2026-04-30"
+excerpt: "An Ansible and Jenkins architecture for enterprise patch management — what worked, what didn't, and the trade-offs we made under regulatory pressure."
+topics: ["infra", "cyber"]
+readTime: 11
+status: "transmission"
+---
+
+For roughly two and a half years at Wells Fargo, I led — and eventually owned — the patch management and CVE remediation program for a Windows and Linux fleet of more than ten thousand servers. By the end of my tenure we had cut patch cycle time by fifty percent, reduced manual operational errors by about seventy percent, and run the program with zero unplanned downtime.
+
+This post is what I'd tell a younger version of myself starting the same job. It's not a how-to. It's an account of decisions and trade-offs, which is the only kind of post about enterprise infrastructure worth writing.
+
+## The problem, briefly.
+
+Banks live under three pressures simultaneously:
+
+1. **Regulators require timely CVE remediation.** Federal regulators (OCC, the Fed, FDIC) and the bank's own internal risk function expect critical CVEs patched within a tight window. The window varies by severity but is rarely longer than a few weeks for criticals.
+2. **Unplanned downtime is a public-trust event.** Banks cannot afford the optics of "ATM network down for two hours because of a Windows update." Every change is reviewed, scheduled, and reversible.
+3. **The fleet is heterogeneous.** Windows Server across half a dozen versions. Red Hat Linux across several major versions. Some workloads on bare metal, some on VMware, some in containers, some in early cloud migrations. Each combination has its own quirks.
+
+The job, in one sentence: **patch everything on time without breaking anything, in a system where the cost of breaking something is higher than the cost of being late.**
+
+## The architecture, in broad strokes.
+
+Here's what we built. (Note: the specific code is proprietary; the architecture is not, and I've open-sourced a sanitized companion repo that recreates the pattern on toy infrastructure.)
+
+### 1. Jenkins as the orchestration plane.
+
+Every patch cycle is a Jenkins pipeline. The pipeline does three things:
+
+- **Plan:** read the CVE list for the cycle, generate the target inventory, validate that every target host has a recent successful baseline check, produce a change ticket.
+- **Execute:** invoke Ansible against the inventory in a tiered rollout (canary → batch → full fleet), with health checks between tiers.
+- **Verify:** confirm patches applied, services healthy, no regression in the last 24 hours of monitoring data.
+
+Jenkins was chosen over GitHub Actions because the bank's compliance posture required the orchestrator to run inside the internal network, on infrastructure we owned. This is the kind of decision that looks dated from outside but is correct from inside.
+
+### 2. Ansible as the execution plane.
+
+We used Ansible playbooks scoped by OS family and by workload tier. The playbook structure was deliberately boring — separate roles per concern (Windows patch, Linux patch, service restart, health check, rollback hook), one role per file, no clever metaprogramming, no `when:` clauses more than two levels deep.
+
+**Boring Ansible is good Ansible.** Every clever shortcut is a bug waiting to detonate at 3 a.m. on a Saturday during a quarterly compliance cycle. I optimized for *the on-call engineer who has never seen this playbook before could read it and understand what it does.*
+
+### 3. Tiered rollout.
+
+Every release went through three tiers:
+
+- **Canary (about 5% of the fleet):** statistically large enough to detect a real regression, small enough that a regression is contained.
+- **Batch (about 25%):** wider rollout, watched for an hour before proceeding.
+- **Full fleet:** the rest, in parallel batches sized to the change-window capacity.
+
+The percentages came out of experimentation. We tested 1%, 5%, and 10% canary tiers. One percent was too small — real regressions occasionally slipped through and surfaced in production. Ten percent was too large — when a regression *did* hit canary, the recovery work was bigger than necessary. Five percent landed in the sweet spot. **The right canary size is not a universal constant; it depends on your fleet's variance, your monitoring sensitivity, and the cost of recovery.** Run the experiment.
+
+### 4. Automated rollback.
+
+Every patch tier had a rollback path defined before the patch went out. For Windows, this was usually System Restore or a specific uninstall sequence. For Linux, it was usually a previous-version pin in the package manager. In some cases, where the underlying change was fundamentally one-way (a kernel upgrade with a new boot image), the "rollback" was actually a forward fix to a known-good newer state.
+
+The discipline was: **no change goes out without a documented rollback. Every rollback is rehearsed in non-production before the production cycle.**
+
+This sounds obvious. It is not industry standard. A surprising number of enterprise patch programs fail this test.
+
+### 5. AI agents at the end.
+
+In the last year of my tenure I built a set of small language model agents that handled three categories of repetitive work:
+
+- **Triage:** classify incoming CVE notifications by severity, affected platforms, and applicable patch packages.
+- **Pre-deployment validation:** check that a proposed patch set wouldn't touch any host currently under change-freeze for an unrelated reason.
+- **Post-deployment summarization:** write the change-ticket narrative for each cycle in a way that satisfied audit requirements without requiring a human to compose it.
+
+The agents weren't doing the engineering. They were doing the *administrative tax* that surrounds the engineering. By my estimate they saved the team somewhere north of three thousand engineering hours per year.
+
+## What didn't work.
+
+A few things I got wrong, in chronological order.
+
+### 1. I underestimated drift.
+
+In the first six months I assumed the fleet was more uniform than it actually was. It was not. There were hundreds of servers with subtly different configurations — different package versions, different service users, different mounted filesystems — that violated the assumptions in my playbooks.
+
+The fix was to add a **drift detection** step at the beginning of every cycle: run a read-only Ansible play that compared current state to expected state and flagged anomalies. This added an hour to every cycle. It saved many more hours than it cost.
+
+### 2. I trusted monitoring more than I should have.
+
+The bank had decent monitoring. It was not decent *enough* to catch a slow-degradation regression on the first canary tier. Twice in the early days, a patch caused a measurable but small performance regression that didn't trip any alarm, and we found out about it from application teams downstream rather than from our own dashboards.
+
+The fix was to add **explicit synthetic transaction probes** to the canary tier. We injected known workloads and measured response times against historical baselines. This caught the next slow regression in canary instead of in batch.
+
+### 3. The first version of the change-ticket system was too detailed.
+
+When I joined, the change tickets for patch cycles were thirty-page documents that nobody read. I made them longer. That was a mistake. After about six months I rebuilt the format from scratch as a one-page summary with links to the detail. **The auditors were happier. The engineers were happier. Nobody was actually using the detail; they were using the summary and trusting the underlying playbook code.**
+
+The lesson: documentation should be sized to its audience's actual reading behavior, not to your sense of how much information is "enough."
+
+## What I'd tell my younger self.
+
+Three things.
+
+**One: boring is a feature.** Every clever piece of automation I wrote eventually had to be debugged at 3 a.m. by someone who hadn't seen it before. I learned to optimize for legibility under stress. That's a discipline that transfers to every other infrastructure job I've had since.
+
+**Two: invest in the canary.** The single highest-leverage investment in this whole program was making the canary tier *unusually* well-instrumented. Most teams treat the canary as "a smaller version of production." We treated it as "the science experiment that determines whether production gets touched today." Different mindset, different tooling, much better outcomes.
+
+**Three: the AI agents are coming for the administrative tax, not the engineering.** I want to be specific about this because the discourse around AI in infrastructure is increasingly stupid. The agents I built didn't replace engineers. They replaced *the typing engineers had to do to satisfy a process.* That's a real value, and it's the value most infrastructure teams will get from LLMs in the next several years. Anyone selling you "AI replaces your SRE team" is wrong, and anyone telling you "AI is just hype" is also wrong. The truth is small, boring, and quietly compounding.
+
+---
+
+I left Wells Fargo in February 2025. The program kept running. That's the highest compliment I could pay myself about the architecture.
+
+*Audacia et veritas.*

@@ -1,0 +1,73 @@
+---
+title: "Layer 1 Humility: What Splicing Fiber Taught a Bank VP"
+slug: "layer-1-humility"
+date: "2026-02-14"
+excerpt: "For a year I went from managing 10,000 servers to pulling fiber in the dirt. Here's what was on the other side of that decision."
+topics: ["philosophy", "infra"]
+readTime: 7
+status: "transmission"
+---
+
+In February of 2025 I was an Assistant Vice President at Wells Fargo, running patch management and CVE remediation across more than ten thousand servers. In May of 2025 I was in the dirt outside of Charlotte, pulling fiber for a residential ISP.
+
+This is the post about what happened between those two sentences, and what I learned from it.
+
+## The setup.
+
+I was laid off in February. The layoff was not personal — it was a reorganization, and reorganizations take people who happen to be sitting in the wrong org chart at the wrong time. I had savings, a respectable resume, and a few months of runway. I could have moved laterally into another bank, taken a senior infrastructure role at a fintech, or gone all-in on the cyber masters I'd already applied to at Johns Hopkins.
+
+I did none of those things. I picked up a job splicing fiber at Prince Telecom and later doing outside plant work at ITG Communications.
+
+If you've never spliced fiber: it is messy, repetitive, physically demanding work that involves a lot of crawling under porches, working around fire-ant mounds, and learning to identify the specific dialect of frustration that arrives when a fusion splicer's screen says `LOSS: 0.41 dB` and you needed `0.10 dB`. It is also, in a way I did not expect, **the work that closes the loop on most of what I'd been doing at a desk for the prior three years.**
+
+## Why I did this.
+
+The honest answer is that I needed to remember what the physical layer feels like.
+
+It is very easy, when you spend three years inside a bank's infrastructure, to slowly forget that every cloud has a floor. The "cloud" is a building. The building has a generator. The generator has a fuel pump. The fuel pump runs on AC pulled from a substation. The substation is fed by transmission lines. The transmission lines are protected by SCADA systems that someone has to keep patched. **Every abstraction has an underside, and most of us never see it.**
+
+I had spent three years writing Ansible playbooks that pushed CVEs across ten thousand servers and never once asked where the servers were physically plugged in. So I went and learned.
+
+## What I actually learned.
+
+A few things that have stuck.
+
+### 1. The fiber doesn't care about your title.
+
+The first day on the job, I was working with a crew of guys who had been doing this for twenty years. They did not care that I had been an AVP at a bank. They cared whether I could prep a splice tray correctly the first time, and whether I would whine about the heat.
+
+This sounds like a humility lesson, and it is. But it's also a *competence* lesson. There is a way of being good at a job that has nothing to do with prestige and everything to do with hands. I had been good at my Wells Fargo job, but in a way that was deeply legible only to people inside the same prestige system. **The fiber crew had a kind of competence that translates across any system, any title, any geography.** That was worth a year of my time.
+
+### 2. The OSI model has a layer one for a reason.
+
+I learned the OSI model in college. I taught it to junior engineers at Wells Fargo. I had never, before 2025, *put my hands on layer one* in any sustained way. Now I have. And I can tell you that a lot of "network problems" that escalate up to senior engineers are layer-one problems that nobody bothered to check. A bad jumper. A dirty connector. A cable that someone stepped on six years ago and that the building's been routing around ever since.
+
+Future me will check the physical layer first. It costs me nothing to look. It costs hours when I don't.
+
+### 3. Layer 1 humility is not the same as Layer 1 *apologia.*
+
+I was tempted, for a few months, to frame this year as "I took a step down to learn humility." That framing is wrong, and it does the fiber crew a disservice. Fiber splicing is not a step *down* — it's a step *over*, into a different and harder kind of competence than enterprise IT. **The work is harder, not easier. The pay is lower because the labor market values prestige work, not because the work is less valuable.**
+
+I am going back to enterprise infrastructure now, and I am going back as a better engineer for the year, but I am not going back because the fiber work was beneath me. It was not.
+
+### 4. The bank version of me would have made a worse cyber researcher.
+
+I'm about to start a Master's in Cybersecurity at Johns Hopkins. Specifically, the APL track. The work APL does — on physical security, on critical infrastructure cyber, on the actual *plumbing* of national-security systems — would have been less accessible to me, intellectually, before the fiber year than after it.
+
+There is a kind of engineer who only knows the cloud, and there is a kind of engineer who knows the cloud *and* what runs underneath it. The second kind is rarer, more useful, and harder to fake. The fiber year was an investment in being the second kind.
+
+## What I'd say to anyone considering doing this.
+
+A few things.
+
+**One:** if you have the savings and the runway, doing a year of work that is physically harder than your desk job will reset your relationship with desk work in a way nothing else will. You will come back wanting to be in front of a screen and grateful for it, which is a healthier baseline than the slow-burn resentment most knowledge workers carry around.
+
+**Two:** do not romanticize the trades. The crews I worked with are good at their jobs and proud of their work, and they would rather be paid the white-collar wage than be paid the working-class wage. The cosplay version of "left tech to work with my hands" is not what this was. This was *adding* a layer of skill, not subtracting one.
+
+**Three:** the year does not appear on most resumes the way it appeared in mine. I put it on. I led with it. **It was a feature, not a footnote.** The companies that wanted to talk to me after the year were the ones who understood why it mattered. The companies that didn't, didn't.
+
+---
+
+I'm back at the keyboard now. The hands remember.
+
+*Per aspera, ad astra.*
