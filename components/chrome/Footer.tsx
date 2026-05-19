@@ -1,10 +1,14 @@
 export function Footer() {
   return (
     <footer
-      className="border-t border-bone-faint bg-ink py-8 mt-16"
-      style={{ fontFamily: 'JetBrains Mono' }}
+      className="border-t border-bone-faint bg-ink"
+      style={{
+        fontFamily: 'var(--font-mono)',
+        paddingBlock: 'var(--space-lg)',
+        marginTop: 'var(--space-xl)',
+      }}
     >
-      <div className="max-w-6xl mx-auto px-4">
+      <div className="shell">
         <div
           style={{
             display: 'grid',
@@ -104,7 +108,9 @@ export function Footer() {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            gap: '0.75rem',
+            gap: '0.5rem 0.75rem',
+            flexWrap: 'wrap',
+            textAlign: 'center',
           }}
         >
           <span>🇺🇸</span>
