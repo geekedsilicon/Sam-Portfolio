@@ -36,7 +36,7 @@ export function getAllTransmissions(): (TransmissionFrontmatter & { slug: string
   return slugs
     .map((slug) => {
       const { frontmatter } = getMdxContent(`content/transmissions/${slug}.mdx`)
-      return { slug, ...(frontmatter as TransmissionFrontmatter) }
+      return { ...(frontmatter as unknown as TransmissionFrontmatter), slug }
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 }
@@ -49,5 +49,5 @@ export function getTransmission(slug: string): {
   const fullPath = path.join(process.cwd(), filePath)
   if (!fs.existsSync(fullPath)) return null
   const { frontmatter, content } = getMdxContent(filePath)
-  return { frontmatter: frontmatter as TransmissionFrontmatter, content }
+  return { frontmatter: frontmatter as unknown as TransmissionFrontmatter, content }
 }

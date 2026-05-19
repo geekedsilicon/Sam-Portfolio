@@ -30,8 +30,12 @@ export function StatusBar() {
 
   return (
     <div
-      className="fixed top-0 inset-x-0 h-8 bg-ink border-b border-bone-faint flex items-center justify-between px-4 z-50 text-bone-dim text-xs"
-      style={{ fontFamily: 'JetBrains Mono', fontSize: 'var(--text-xs)' }}
+      className="fixed top-0 inset-x-0 h-8 bg-ink border-b border-bone-faint flex items-center justify-between z-50 text-bone-dim text-xs"
+      style={{
+        fontFamily: 'var(--font-mono)',
+        fontSize: 'var(--text-xs)',
+        paddingInline: 'var(--shell-pad)',
+      }}
     >
       <div className="flex items-center gap-3">
         {/* Pulse indicator */}

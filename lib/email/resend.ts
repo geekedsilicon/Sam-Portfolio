@@ -10,7 +10,7 @@ export async function sendCommsNotification(input: {
   return resend.emails.send({
     from: 'STATION 01 <comms@samuelkelley.dev>',
     to: process.env.CONTACT_TO_EMAIL ?? 'samuel.c.kelley@proton.me',
-    replyTo: input.email,
+    reply_to: input.email,
     subject: `STATION 01 // transmission from ${input.name}`,
     text: [
       `from:    ${input.name} <${input.email}>`,

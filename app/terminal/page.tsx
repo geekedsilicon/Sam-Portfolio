@@ -175,12 +175,21 @@ export default function TerminalPage() {
   }
 
   return (
-    <main
-      id="main"
+    <div
       onClick={focusInput}
-      className="min-h-screen px-4 py-8 font-mono text-sm cursor-text bg-ink"
+      className="font-mono cursor-text"
+      style={{ fontSize: 'var(--text-sm)' }}
     >
-      <div ref={scrollRef} className="max-w-4xl mx-auto h-[80vh] overflow-y-auto pb-32">
+      <div
+        ref={scrollRef}
+        className="overflow-y-auto"
+        style={{
+          maxWidth: '64rem',
+          marginInline: 'auto',
+          height: 'calc(100svh - var(--chrome-h) - 2 * var(--space-lg))',
+          paddingBottom: 'var(--space-xl)',
+        }}
+      >
         {lines.map((line, i) => (
           <div
             key={i}
@@ -204,6 +213,6 @@ export default function TerminalPage() {
           />
         </div>
       </div>
-    </main>
+    </div>
   )
 }

@@ -6,7 +6,6 @@ import remarkGfm from 'remark-gfm'
 import { getTransmission, getTransmissionSlugs } from '@/lib/mdx'
 import { AsciiBox } from '@/components/typography/AsciiBox'
 import { LatinMotto } from '@/components/typography/LatinMotto'
-import { StationTitle } from '@/components/typography/StationTitle'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -29,7 +28,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 const mdxComponents = {
   AsciiBox,
   LatinMotto,
-  h2: ({ children }: { children: React.ReactNode }) => (
+  h2: ({ children }: { children?: React.ReactNode }) => (
     <h2
       className="font-serif"
       style={{
@@ -44,7 +43,7 @@ const mdxComponents = {
       {children}
     </h2>
   ),
-  h3: ({ children }: { children: React.ReactNode }) => (
+  h3: ({ children }: { children?: React.ReactNode }) => (
     <h3
       className="font-serif"
       style={{
@@ -59,7 +58,7 @@ const mdxComponents = {
       {children}
     </h3>
   ),
-  p: ({ children }: { children: React.ReactNode }) => (
+  p: ({ children }: { children?: React.ReactNode }) => (
     <p
       className="font-mono"
       style={{
@@ -72,13 +71,13 @@ const mdxComponents = {
       {children}
     </p>
   ),
-  strong: ({ children }: { children: React.ReactNode }) => (
+  strong: ({ children }: { children?: React.ReactNode }) => (
     <strong style={{ color: 'var(--color-bone)', fontWeight: 700 }}>{children}</strong>
   ),
-  em: ({ children }: { children: React.ReactNode }) => (
+  em: ({ children }: { children?: React.ReactNode }) => (
     <em style={{ color: 'var(--color-bone-dim)', fontStyle: 'italic' }}>{children}</em>
   ),
-  a: ({ href, children }: { href?: string; children: React.ReactNode }) => (
+  a: ({ href, children }: { href?: string; children?: React.ReactNode }) => (
     <a
       href={href}
       style={{ color: 'var(--color-phosphor)', textDecoration: 'underline' }}
@@ -88,7 +87,7 @@ const mdxComponents = {
       {children}
     </a>
   ),
-  ul: ({ children }: { children: React.ReactNode }) => (
+  ul: ({ children }: { children?: React.ReactNode }) => (
     <ul
       className="font-mono"
       style={{
@@ -103,7 +102,7 @@ const mdxComponents = {
       {children}
     </ul>
   ),
-  ol: ({ children }: { children: React.ReactNode }) => (
+  ol: ({ children }: { children?: React.ReactNode }) => (
     <ol
       className="font-mono"
       style={{
@@ -118,10 +117,10 @@ const mdxComponents = {
       {children}
     </ol>
   ),
-  li: ({ children }: { children: React.ReactNode }) => (
+  li: ({ children }: { children?: React.ReactNode }) => (
     <li style={{ marginBottom: '0.4em' }}>{children}</li>
   ),
-  code: ({ children }: { children: React.ReactNode }) => (
+  code: ({ children }: { children?: React.ReactNode }) => (
     <code
       style={{
         fontFamily: 'JetBrains Mono',

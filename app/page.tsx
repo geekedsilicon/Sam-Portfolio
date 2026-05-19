@@ -33,7 +33,13 @@ export default function Home() {
       {/* ── HERO ── */}
       <section
         aria-label="Site introduction"
-        style={{ minHeight: '100svh', display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingTop: '2rem', paddingBottom: '2rem' }}
+        style={{
+          minHeight: 'calc(100svh - var(--chrome-h) - 2 * var(--space-lg))',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          paddingBottom: 'var(--space-md)',
+        }}
       >
         {/* Two-column layout: content left, constellation right */}
         <div className="hero-layout">

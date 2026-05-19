@@ -88,3 +88,7 @@ export const METRICS = {
 
 export type MetricKey = keyof typeof METRICS
 export type MetricSource = 'verified' | 'approximate' | 'derived'
+
+export function metric(key: MetricKey) {
+  return METRICS[key]
+}

@@ -80,21 +80,22 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="bg-ink text-bone">
+      <body className="bg-ink text-bone scanlines">
         {/* Skip to main content */}
         <a
           href="#main"
-          className="sr-only focus:not-sr-only"
+          className="skip-link"
           style={{
             position: 'absolute',
-            top: 0,
-            left: 0,
+            top: '-100px',
+            left: '0.5rem',
             zIndex: 9999,
             padding: '0.5rem 1rem',
             background: 'var(--color-phosphor)',
             color: 'var(--color-ink)',
             fontFamily: 'JetBrains Mono',
             fontSize: '0.75rem',
+            transition: 'top 200ms var(--ease-station)',
           }}
         >
           Skip to main content
@@ -105,10 +106,15 @@ export default function RootLayout({
 
         <main
           id="main"
-          className="min-h-screen pt-24 pb-8 px-4"
-          style={{ fontFamily: 'JetBrains Mono' }}
+          style={{
+            minHeight: '100svh',
+            paddingTop: 'var(--chrome-h)',
+            fontFamily: 'var(--font-mono)',
+          }}
         >
-          <div className="max-w-6xl mx-auto">{children}</div>
+          <div className="shell" style={{ paddingBlock: 'var(--space-lg)' }}>
+            {children}
+          </div>
         </main>
 
         <Footer />

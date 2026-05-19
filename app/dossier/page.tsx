@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 const mdxComponents = {
   AsciiBox,
   LatinMotto,
-  h2: ({ children }: { children: React.ReactNode }) => (
+  h2: ({ children }: { children?: React.ReactNode }) => (
     <h2
       className="font-serif"
       style={{
@@ -33,7 +33,7 @@ const mdxComponents = {
       {children}
     </h2>
   ),
-  h3: ({ children }: { children: React.ReactNode }) => (
+  h3: ({ children }: { children?: React.ReactNode }) => (
     <h3
       className="font-serif"
       style={{
@@ -48,7 +48,7 @@ const mdxComponents = {
       {children}
     </h3>
   ),
-  p: ({ children }: { children: React.ReactNode }) => (
+  p: ({ children }: { children?: React.ReactNode }) => (
     <p
       className="font-mono"
       style={{
@@ -61,13 +61,13 @@ const mdxComponents = {
       {children}
     </p>
   ),
-  strong: ({ children }: { children: React.ReactNode }) => (
+  strong: ({ children }: { children?: React.ReactNode }) => (
     <strong style={{ color: 'var(--color-bone)', fontWeight: 700 }}>{children}</strong>
   ),
-  em: ({ children }: { children: React.ReactNode }) => (
+  em: ({ children }: { children?: React.ReactNode }) => (
     <em style={{ color: 'var(--color-bone-dim)', fontStyle: 'italic' }}>{children}</em>
   ),
-  a: ({ href, children }: { href?: string; children: React.ReactNode }) => (
+  a: ({ href, children }: { href?: string; children?: React.ReactNode }) => (
     <a
       href={href}
       style={{ color: 'var(--color-phosphor)', textDecoration: 'underline' }}
@@ -77,7 +77,7 @@ const mdxComponents = {
       {children}
     </a>
   ),
-  ul: ({ children }: { children: React.ReactNode }) => (
+  ul: ({ children }: { children?: React.ReactNode }) => (
     <ul
       className="font-mono"
       style={{
@@ -92,7 +92,7 @@ const mdxComponents = {
       {children}
     </ul>
   ),
-  li: ({ children }: { children: React.ReactNode }) => (
+  li: ({ children }: { children?: React.ReactNode }) => (
     <li style={{ marginBottom: '0.4em' }}>{children}</li>
   ),
   hr: () => (
