@@ -4,7 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { StationTitle } from '@/components/typography/StationTitle'
 
-type Category = 'ALL' | 'CYBER' | 'INFRA' | 'HARDWARE' | 'CLOUD' | 'AI'
+type Category = 'ALL' | 'CYBER' | 'INFRA' | 'HARDWARE' | 'CLOUD' | 'AI' | 'WEB'
 
 const FEATURED = [
   {
@@ -49,14 +49,15 @@ const FEATURED = [
 ]
 
 const INDEX_CARDS = [
+  // ── HARDWARE ────────────────────────────────────────────────────────────────
   {
     slug: 'home-lab',
     category: 'HARDWARE' as Category,
     id: 'HW-01',
     title: 'Home Lab — Dell PowerEdge R610 + Synology NAS',
-    hook: 'A real home lab. Hypervisor on a 1U Dell, NAS on Synology, services as code.',
+    hook: 'Production home lab hosting Plex, VPN, and automated photo backups. Dell PowerEdge 610 server paired with Synology NAS for a fully self-hosted environment with stable network operations and regular backups.',
     year: '2020 – present',
-    stack: ['Docker', 'ESXi', 'Synology DSM', 'VPN', 'PowerEdge'],
+    stack: ['Dell PowerEdge', 'Synology DSM', 'Docker', 'ESXi', 'Plex', 'VPN'],
     repoUrl: 'https://github.com/sammysprinkler/home-lab-iac',
     demoUrl: null,
   },
@@ -64,10 +65,10 @@ const INDEX_CARDS = [
     slug: 'soho-network',
     category: 'HARDWARE' as Category,
     id: 'HW-02',
-    title: 'Advanced SOHO Network During COVID',
-    hook: 'Enterprise-grade home network segmentation built during 2020 remote work pivot.',
+    title: 'Advanced SOHO Network Setup During COVID',
+    hook: 'Enterprise-grade SOHO network in a remote location with no traditional internet. UniFi UDM Dream Machine Pro managing cameras, doorbell, PoE switch, and APs — with a MoFi router converting 4G to Wi-Fi. VLANs and custom route tables throughout.',
     year: '2020',
-    stack: ['Unifi', 'VLANs', 'pfSense', 'Wireshark'],
+    stack: ['UniFi UDM Pro', 'VLANs', 'MoFi 4G', 'PoE', 'Access Points', 'Wireshark'],
     repoUrl: null,
     demoUrl: null,
   },
@@ -76,9 +77,9 @@ const INDEX_CARDS = [
     category: 'HARDWARE' as Category,
     id: 'HW-03',
     title: 'Custom PC Build Series',
-    hook: 'Been building custom PCs since age 13. 20+ builds across gaming, workstation, and server class.',
+    hook: 'Series of custom PC builds from compact office setups to high-end gaming rigs with custom water cooling loops and silent builds. Hands-on from component selection through thermal tuning and system optimization.',
     year: '2013 – present',
-    stack: ['Hardware', 'Overclocking', 'Thermal Management'],
+    stack: ['Custom Water Cooling', 'Silent Builds', 'Overclocking', 'Thermal Management', 'Hardware'],
     repoUrl: null,
     demoUrl: null,
   },
@@ -87,20 +88,55 @@ const INDEX_CARDS = [
     category: 'HARDWARE' as Category,
     id: 'HW-04',
     title: 'FPV Drone Build',
-    hook: 'Full-build FPV racing drone. Soldered ESCs, tuned Betaflight, flew it into things.',
+    hook: 'Custom FPV drone assembled from scratch — meticulously soldered ESCs and flight controller, flashed Betaflight firmware, and tuned PID loops for aerial photography and racing. Electronic assembly meets precision software programming.',
     year: '2021',
-    stack: ['Betaflight', 'FPV', 'Soldering', 'PID Tuning'],
+    stack: ['Betaflight', 'ESC Soldering', 'PID Tuning', 'FPV Camera', 'Flight Controller'],
     repoUrl: null,
     demoUrl: null,
   },
+  {
+    slug: '3d-printing',
+    category: 'HARDWARE' as Category,
+    id: 'HW-05',
+    title: '3D Printing and Design Exploration',
+    hook: 'Comprehensive 3D printing project using a Minda Magician Max printer and Cura. Designed and printed functional items (shoe accessories, lawnmower parts) and decorative objects. Performed full printer maintenance including motor disassembly and replacement.',
+    year: '2022 – present',
+    stack: ['Cura', 'FDM Printing', '3D Modeling', 'CAD', 'Printer Maintenance'],
+    repoUrl: null,
+    demoUrl: null,
+  },
+  {
+    slug: 'automotive-mods',
+    category: 'HARDWARE' as Category,
+    id: 'HW-06',
+    title: 'Comprehensive Automotive Modification & Maintenance',
+    hook: "Extensive modifications and maintenance across 5 vehicles: '92 Jeep YJ, 2015 Ram 1500, 2014 Scion FRS, 2021 Toyota Supra, and Yamaha MT07. Covers low-voltage electrical, soldering, welding, stereo installs, engine overhauls, and transmission/differential service.",
+    year: '2015 – present',
+    stack: ['Soldering', 'Welding', 'Low-Voltage Electrical', 'Stereo Installation', 'Engine Work'],
+    repoUrl: null,
+    demoUrl: null,
+  },
+  // ── INFRA ────────────────────────────────────────────────────────────────────
+  {
+    slug: 'business-network-sim',
+    category: 'INFRA' as Category,
+    id: 'INFRA-02',
+    title: 'Business Network Design & Implementation Simulation',
+    hook: 'Final networking course project simulating a network consultant engagement. Designed a full business network in Cisco Packet Tracer — then replicated it on enterprise hardware with APs, switches, routers, and firewalls. Developed subnet tables and route tables for the complete deployment.',
+    year: '2021',
+    stack: ['Cisco Packet Tracer', 'Cisco Hardware', 'Subnetting', 'Routing', 'Firewalls', 'VLANs'],
+    repoUrl: null,
+    demoUrl: null,
+  },
+  // ── CLOUD ────────────────────────────────────────────────────────────────────
   {
     slug: 'aws-labs',
     category: 'CLOUD' as Category,
     id: 'CLOUD-01',
     title: 'AWS Foundations Lab Series',
-    hook: 'Hands-on infrastructure labs: VPC, EC2, S3, RDS, CloudWatch, EFS, IAM.',
+    hook: 'Six hands-on AWS labs: VPC design and EC2 deployment, S3 bucket policies, RDS cluster setup and connectivity, CloudWatch alarms with SNS notifications, and EFS file system integration with EC2. Foundation for AWS Cloud Practitioner certification.',
     year: '2023',
-    stack: ['VPC', 'EC2', 'S3', 'RDS', 'CloudWatch', 'IAM', 'EFS'],
+    stack: ['VPC', 'EC2', 'S3', 'RDS', 'CloudWatch', 'EFS', 'SNS', 'IAM', 'Elastic IP'],
     repoUrl: 'https://github.com/sammysprinkler/aws-labs',
     demoUrl: null,
   },
@@ -115,20 +151,66 @@ const INDEX_CARDS = [
     repoUrl: null,
     demoUrl: null,
   },
+  // ── AI ───────────────────────────────────────────────────────────────────────
   {
     slug: 'gpt-bot-suite',
     category: 'AI' as Category,
     id: 'AI-01',
-    title: 'GPT-Powered Bot Suite',
-    hook: '7 purpose-built bots: BudgetEZ, calendar assistant, code reviewer, and more.',
-    year: '2023 – 2024',
-    stack: ['GPT-4', 'Python', 'API', 'Automation'],
+    title: 'Suite of Specialized GPT-Powered Bots',
+    hook: '7 purpose-built GPT bots tailored for distinct domains: BudgetEZ (financial management), Better Call Chat (customer service), Cornell Note Organizer, Tech Executive Advisor, Agile Ally, Print Master Max, and CloudMate. Natural language understanding customized per function.',
+    year: '2023 – present',
+    stack: ['GPT-4', 'ChatGPT API', 'Prompt Engineering', 'Python', 'Automation'],
+    repoUrl: null,
+    demoUrl: null,
+  },
+  {
+    slug: 'ai-graphic-design',
+    category: 'AI' as Category,
+    id: 'AI-02',
+    title: 'AI-Driven Graphic Design & UI/UX Enhancement',
+    hook: 'Led digital media transformation using AI tools and Canva across all social platforms. Developed a unified content scheduling strategy, maintained brand consistency, and iteratively improved UI/UX based on engagement feedback — resulting in boosted online presence.',
+    year: '2023 – present',
+    stack: ['AI Design Tools', 'Canva', 'UI/UX', 'Social Media Strategy', 'Brand Design'],
+    repoUrl: null,
+    demoUrl: null,
+  },
+  {
+    slug: 'instagram-bot',
+    category: 'AI' as Category,
+    id: 'AI-03',
+    title: 'Smart Instagram Follower Management Bot',
+    hook: 'Python bot that automates Instagram follower management — checks mutual follows, unfollows non-reciprocal accounts, and intelligently excludes verified and major accounts. Positive reception for its customization and utility.',
+    year: '2023',
+    stack: ['Python', 'Instagram API', 'Automation', 'Algorithm Design'],
+    repoUrl: null,
+    demoUrl: null,
+  },
+  // ── WEB ──────────────────────────────────────────────────────────────────────
+  {
+    slug: 'portfolio-website',
+    category: 'WEB' as Category,
+    id: 'WEB-01',
+    title: 'Dynamic Personal Portfolio Website',
+    hook: 'The site you\'re on. Built with Next.js, Three.js, and Tailwind CSS. Interactive 3D constellation canvas, performance-optimized, fully responsive. Version-controlled on GitHub throughout iterative development.',
+    year: '2023 – present',
+    stack: ['Next.js', 'Three.js', 'Tailwind CSS', 'TypeScript', 'Vite', 'GitHub'],
+    repoUrl: 'https://github.com/geekedsilicon/sam-portfolio',
+    demoUrl: null,
+  },
+  {
+    slug: 'cloudimpact-website',
+    category: 'WEB' as Category,
+    id: 'WEB-02',
+    title: 'CloudImpact Solutions — Website Build',
+    hook: 'Led the Webflow build for CloudImpact Solutions. Designed a modern, interactive site aligned with the company brand. Implemented SEO strategy and content that drove measurable increases in web traffic, user engagement, and stakeholder satisfaction.',
+    year: '2023 – present',
+    stack: ['Webflow', 'SEO', 'No-Code', 'UI/UX', 'Content Strategy'],
     repoUrl: null,
     demoUrl: null,
   },
 ]
 
-const ALL_CATEGORIES: Category[] = ['ALL', 'CYBER', 'INFRA', 'HARDWARE', 'CLOUD', 'AI']
+const ALL_CATEGORIES: Category[] = ['ALL', 'CYBER', 'INFRA', 'HARDWARE', 'CLOUD', 'AI', 'WEB']
 
 export default function ArsenalPage() {
   const [activeFilter, setActiveFilter] = useState<Category>('ALL')
@@ -148,7 +230,7 @@ export default function ArsenalPage() {
       <StationTitle
         number="04"
         name="ARSENAL"
-        subtitle="Selected projects. Three case studies. Everything else curated."
+        subtitle="Selected projects. Three deep-dive case studies. Seventeen projects across cyber, infra, hardware, cloud, AI, and web."
       />
 
       {/* Filter tabs */}

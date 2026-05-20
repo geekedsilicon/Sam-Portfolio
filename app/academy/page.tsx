@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { StationTitle } from '@/components/typography/StationTitle'
 import { AsciiBox } from '@/components/typography/AsciiBox'
 import { METRICS } from '@/lib/metrics'
+import { CourseList } from '@/components/academy/CourseList'
 
 export const metadata: Metadata = {
   title: 'Academy',
@@ -73,7 +74,9 @@ export default function AcademyPage() {
               <li>▸ Database systems and optimization</li>
               <li>▸ Senior Capstone: Blockchain Secure Communications for Fort Jackson (Scrum Master)</li>
               <li>▸ ONR Cyber Security Research Assistant (concurrent, Jan–Apr 2022)</li>
+              <li>▸ 5× Dean&apos;s List · 1× President&apos;s List · Magna Cum Laude</li>
             </ul>
+            <CourseList />
           </div>
         </AsciiBox>
 
